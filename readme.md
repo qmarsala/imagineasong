@@ -1,5 +1,5 @@
 ### dependencies
-AutoHotKey v2
+[AutoHotKey v2](https://www.autohotkey.com/download/ahk-v2.exe)
 
 ## Getting Started
 Paste song text into the `in.txt` file, and press `ctrl+shft+f1` to convert the song into commands.    
