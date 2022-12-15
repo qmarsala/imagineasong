@@ -1,17 +1,21 @@
 #SingleInstance force
 
 SetWorkingDir A_ScriptDir
+^+f1::imagineASong(true)
+^+f2::imagineASong(false)
 
-^+f1::processFile
-^+f2::imagineASong
-
-imagineASong() {
+imagineASong(reloadSong) {
     static offset := 1
     static imagineLines := []
-    if (imagineLines.Length < 1) {
+    if (imagineLines.Length < 1 || reloadSong) {
         imagineLines := processFile()
+        offset := 1
     }
+
     offset := imagineNext(imagineLines, offset)
+    if (offset = 1) {
+        imagineLines := []
+    }
 }
 
 processFile() {
