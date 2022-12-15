@@ -52,11 +52,11 @@ imagineNext(imagineLines, offset) {
     }
 
     next := imagineLines[offset]
-    discordCommandPaste(next)
+    sendDiscordCommand(next)
     return offset + 1
 }
 
-discordCommandPaste(content) {
+sendDiscordCommand(content) {
     if (WinExist("Discord")) {
         WinActivate
         Sleep(25)
