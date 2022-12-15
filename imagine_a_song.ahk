@@ -23,12 +23,13 @@ processFile() {
     ;outPath := Format("./out/{}", fileName)
     if (FileExist("out.txt")) {
         FileDelete("out.txt")
-        global imagineLines := []
     }
     if (!FileExist("in.txt")) {
         MsgBox("no input file found")
     }
-
+    
+    global offset := 1
+    global imagineLines := []
     Loop read, "in.txt"
     {
         imagineLines.Push(A_LoopReadLine)
