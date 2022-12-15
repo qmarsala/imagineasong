@@ -2,22 +2,17 @@
 
 SetWorkingDir A_ScriptDir
 
-;todo kill globals
-imagineLines := []
-offset := 1
-
 ^+f1::processFile
-^+f2::imagineNext
+^+f2::imagineASong
 
-; todo: support multiple files
-; getFileNames() {
-;     fileNames := []
-;     Loop Files, A_WorkingDir "./in\*.txt"
-;     {
-;         fileNames.Push(A_LoopFileName)
-;     }
-;     return fileNames
-; }
+imagineASong() {
+    static offset := 1
+    static imagineLines := []
+    if (imagineLines.Length < 1) {
+        imagineLines := processFile()
+    }
+    offset := imagineNext(imagineLines, offset)
+}
 
 processFile() {
     ;outPath := Format("./out/{}", fileName)
@@ -26,10 +21,10 @@ processFile() {
     }
     if (!FileExist("in.txt")) {
         MsgBox("no input file found")
+        return
     }
-    
-    global offset := 1
-    global imagineLines := []
+
+    imagineLines := []
     Loop read, "in.txt"
     {
         imagineLines.Push(A_LoopReadLine)
@@ -38,23 +33,23 @@ processFile() {
         line := Format("/imagine {}`n", A_LoopReadLine)
         FileAppend(line, "out.txt")
     }
+
+    return imagineLines
 }
 
-imagineNext() {
-    global imagineLines
+imagineNext(imagineLines, offset) {
     if (imagineLines.Length < 1){
         MsgBox("No song loaded")
-        return
+        return 1
     }
-
-    global offset
     if (offset > imagineLines.Length) {
-        offset := 1
+        MsgBox("Song has ended")
+        return 1
     }
 
     next := imagineLines[offset]
     discordCommandPaste(next)
-    offset := offset + 1
+    return offset + 1
 }
 
 discordCommandPaste(content) {
@@ -72,3 +67,13 @@ discordCommandPaste(content) {
     A_Clipboard := content
     SendInput("{Space}^v")
 }
+
+; todo: support multiple files
+; getFileNames() {
+;     fileNames := []
+;     Loop Files, A_WorkingDir "./in\*.txt"
+;     {
+;         fileNames.Push(A_LoopFileName)
+;     }
+;     return fileNames
+; }
