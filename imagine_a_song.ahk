@@ -57,8 +57,16 @@ imagineNext() {
 }
 
 discordCommandPaste(content) {
+    if (WinExist("Discord")) {
+        WinActivate
+        Sleep(25)
+    } else {
+        MsgBox("Discord not found")
+        return
+    }
+
     SendInput("/imagine")
-    Sleep(1)
+    Sleep(5)
 
     A_Clipboard := content
     SendInput("{Space}^v")
