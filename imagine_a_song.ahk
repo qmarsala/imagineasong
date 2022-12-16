@@ -4,25 +4,24 @@ SetWorkingDir A_ScriptDir
 ^+f1::imagineASong(true)
 ^+f2::imagineASong(false)
 
-imagineASong(reloadSong) {
-    static offset := 1
+imagineASong(resetOffset) {
+    static offset := readOffset()
     static imagineLines := []
-    if (imagineLines.Length < 1 || reloadSong) {
+    if (imagineLines.Length < 1) {
         imagineLines := processFile()
+    }
+    if (resetOffset) {
         offset := 1
     }
 
     offset := imagineNext(imagineLines, offset)
+    storeOffset(offset)
     if (offset = 1) {
         imagineLines := []
     }
 }
 
 processFile() {
-    ;outPath := Format("./out/{}", fileName)
-    if (FileExist("out.txt")) {
-        FileDelete("out.txt")
-    }
     if (!FileExist("in.txt")) {
         MsgBox("no input file found")
         return
@@ -32,10 +31,6 @@ processFile() {
     Loop read, "in.txt"
     {
         imagineLines.Push(A_LoopReadLine)
-
-        ; will be used later to re-populate imagineLines after restart
-        line := Format("/imagine {}`n", A_LoopReadLine)
-        FileAppend(line, "out.txt")
     }
 
     return imagineLines
@@ -72,12 +67,18 @@ sendDiscordCommand(content) {
     SendInput("{Space}^v")
 }
 
-; todo: support multiple files
-; getFileNames() {
-;     fileNames := []
-;     Loop Files, A_WorkingDir "./in\*.txt"
-;     {
-;         fileNames.Push(A_LoopFileName)
-;     }
-;     return fileNames
-; }
+storeOffset(offset) {
+    offsetStorePath := "offset.txt"
+    if (FileExist(offsetStorePath)) {
+        FileDelete(offsetStorePath)
+    }
+    FileAppend(offset, offsetStorePath)
+}
+
+readOffset() {
+    offsetStorePath := "offset.txt"
+    offset := FileExist(offsetStorePath)
+        ? FileRead(offsetStorePath)
+        : 1
+    return offset
+}
